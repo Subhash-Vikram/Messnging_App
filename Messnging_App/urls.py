@@ -13,16 +13,25 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+# from django.contrib import admin
 from django.urls import path
 from msgapp import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    # path('', views.default.as_view()),
     path('Login/', views.Login.as_view()),
     path('Admin/', views.Admin.as_view()),
     path('Admin/adduser/', views.Adduser.as_view()),
     path('Admin/updateuser/', views.Updateuser.as_view()),
     path('Admin/deleteuser/', views.Deleteuser.as_view()),
-    # path('', views.default.as_view())
+    path('Group/', views.Group.as_view()),
+    path('Group/create', views.Creategroup.as_view()),
+    path('Group/delete', views.Deletegroup.as_view()),
+    path('Group/search', views.Searchgroup.as_view()),
+    path('Group/addmembers', views.Addmembers.as_view()),
+    path('Group/removemembers', views.Removemembers.as_view()),
+    path('Group/Messages', views.Viewmessages.as_view()),
+    path('Group/Sendmessage', views.Sendmessage.as_view()),
+    path('Group/Likemessage', views.Likemessage.as_view()),
 ]
