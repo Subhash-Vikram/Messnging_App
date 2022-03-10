@@ -1,3 +1,7 @@
+"""
+Contains all operations related to user collection
+"""
+
 from pymongo import MongoClient
 import configparser
 
@@ -37,14 +41,6 @@ def is_Admin(username: str) -> bool:
     return False
 
 
-# Returns list of all users of the application
-def list_of_users():
-    db = connect()
-    col_user = db['users']
-    user_details = col_user.find({}, {"_id":0})
-    return list(user_details)
-
-
 # checks weather user exist or not
 def auth_user(username: str, password: str) -> dict:
     # checks weather user exists or not
@@ -60,5 +56,45 @@ def auth_user(username: str, password: str) -> dict:
         return {"Status": "Failed", "Message": "username doesn't exists..."}
 
 
-if __name__ == '__main__':
-    auth_user('subhash', 'subh@sh1031')
+# Returns list of all users of the application
+def list_of_users() -> list:
+    db = connect()
+    col_user = db['users']
+    user_details = col_user.find({}, {"_id": 0})
+    return list(user_details)
+
+
+# used to create a new user
+def add_user(json_val: dict) -> dict:
+    username = json_val['Username']
+    db = connect()
+    col_user = db['users']
+    if username_exists(col_user, username):
+        return {"Status": "Failed", "Message": "Username already exists."}
+    else:
+        col_user.insert_one(json_val)
+        return {"Status": "Success", "Message": "User added successfully."}
+
+
+# used to update an existing user
+def update_user(json_val: dict) -> dict:
+    username = json_val['Username']
+    db = connect()
+    col_user = db['users']
+    if username_exists(col_user, username):
+        col_user.update_one({'Username': username}, json_val)
+        return {"Status": "Success", "Message": "User updated successfully."}
+    else:
+        return {"Status": "Failed", "Message": "Username doesn't exists."}
+
+
+# used to delete an existing user
+def delete_user(json_val: dict) -> dict:
+    username = json_val['Username']
+    db = connect()
+    col_user = db['users']
+    if username_exists(col_user, username):
+        col_user.delete_one({'Username': username}, json_val)
+        return {"Status": "Success", "Message": "User deleted successfully."}
+    else:
+        return {"Status": "Failed", "Message": "Username doesn't exists."}

@@ -18,6 +18,11 @@ from django.urls import path
 from msgapp import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('Login/', views.Login.as_view()),
+    path('Admin/', views.Admin.as_view()),
+    path('Admin/adduser/', views.Adduser.as_view()),
+    path('Admin/updateuser/', views.Updateuser.as_view()),
+    path('Admin/deleteuser/', views.Deleteuser.as_view()),
+    # path('', views.default.as_view())
 ]
