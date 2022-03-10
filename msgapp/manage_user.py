@@ -1,7 +1,7 @@
 """
 Contains all operations related to user collection
 """
-
+import json
 from pymongo import MongoClient
 import configparser
 
@@ -65,7 +65,8 @@ def list_of_users() -> list:
 
 
 # used to create a new user
-def add_user(json_val: dict) -> dict:
+def add_user(json_val: str) -> dict:
+    json_val = json.loads(json_val.decode("utf-8").replace("\\", r"\\"))
     username = json_val['Username']
     db = connect()
     col_user = db['users']
@@ -77,24 +78,26 @@ def add_user(json_val: dict) -> dict:
 
 
 # used to update an existing user
-def update_user(json_val: dict) -> dict:
+def update_user(json_val: str) -> dict:
+    json_val = json.loads(json_val.decode("utf-8").replace("\\", r"\\"))
     username = json_val['Username']
     db = connect()
     col_user = db['users']
     if username_exists(col_user, username):
-        col_user.update_one({'Username': username}, json_val)
+        col_user.update_one({'Username': username}, {'$set': json_val})
         return {"Status": "Success", "Message": "User updated successfully."}
     else:
         return {"Status": "Failed", "Message": "Username doesn't exists."}
 
 
 # used to delete an existing user
-def delete_user(json_val: dict) -> dict:
+def delete_user(json_val: str) -> dict:
+    json_val = json.loads(json_val.decode("utf-8").replace("\\", r"\\"))
     username = json_val['Username']
     db = connect()
     col_user = db['users']
     if username_exists(col_user, username):
-        col_user.delete_one({'Username': username}, json_val)
+        col_user.delete_one({'Username': username}, {'$set': json_val})
         return {"Status": "Success", "Message": "User deleted successfully."}
     else:
         return {"Status": "Failed", "Message": "Username doesn't exists."}
