@@ -8,7 +8,7 @@ from datetime import datetime
 
 # Parsing Config File
 PARSER = configparser.ConfigParser()
-PARSER.read("E:\\Messnging_App\\Config\\Config.config")
+PARSER.read("Config\\Config.config")
 CONNECTION_STRING = PARSER.get('Database', 'conn_string')
 DATABASE = PARSER.get('Database', 'database')
 CONNECTION_STRING = CONNECTION_STRING.replace('<username>', PARSER.get('Database', 'username'))

@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from msgapp.generic_functions import isValidJson
 from msgapp.manage_user import add_user, update_user, delete_user, auth_user, is_Admin, list_of_users
 from msgapp.manage_groups import list_of_groups, create_group, delete_group, search_group, add_members, remove_members
+from msgapp.manage_messages import view_messages, send_message, like_message
 
 
 # Create your views here.
@@ -172,14 +173,43 @@ class Removemembers(APIView):
 
 # API to view messages of given group
 class Viewmessages(APIView):
-    pass
+    @staticmethod
+    def get(request):
+        try:
+            username = request.META.get('HTTP_USERNAME')
+            groupname = request.META.get('HTTP_GROUPNAME')
+            return JsonResponse(view_messages(username,groupname))
+        except Exception:
+            return JsonResponse({"Status": "Failed",
+                                 "Message": "Error occurred while viewing messages of the given group."})
 
 
 # API to Send message in a group
 class Sendmessage(APIView):
+    @staticmethod
+    def post(request):
+        try:
+            username = request.META.get('HTTP_USERNAME')
+            groupname = request.META.get('HTTP_GROUPNAME')
+            message = request.body
+            return JsonResponse(send_message(username, groupname, message))
+        except Exception:
+            return JsonResponse({"Status": "Failed",
+                                 "Message": "Error occurred while sending message to the given group."})
     pass
 
 
 # API to Like a message of the group
 class Likemessage(APIView):
+    @staticmethod
+    def get(request):
+        try:
+            username = request.META.get('HTTP_USERNAME')
+            groupname = request.META.get('HTTP_GROUPNAME')
+            msgsentby = request.META.get('HTTP_MESSAGESENTBY')
+            message = request.body
+            return JsonResponse(like_message(username, msgsentby, groupname, message))
+        except Exception:
+            return JsonResponse({"Status": "Failed",
+                                 "Message": "Error occurred while liking message of the given group."})
     pass
