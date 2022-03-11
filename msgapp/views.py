@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 # from msgapp.database import auth_user, is_Admin, list_of_users
 from msgapp.generic_functions import isValidJson
 from msgapp.manage_user import add_user, update_user, delete_user, auth_user, is_Admin, list_of_users
-from msgapp.manage_groups import list_of_groups
+from msgapp.manage_groups import list_of_groups, create_group, delete_group
 
 
 # Create your views here.
@@ -92,17 +92,35 @@ class Group(APIView):
         except Exception:
             return JsonResponse({"Status": "Failed",
                                  "Message": "Error occurred while accessing the groups."})
-        pass
-    pass
 
 
 # API to create a new group
 class Creategroup(APIView):
-    pass
+    def get(self, request):
+        try:
+            username = request.META.get('HTTP_USERNAME')
+            json_val = request.body
+            if isValidJson(json_val) and (str(json_val.decode('utf-8')) != ''):
+                return JsonResponse(create_group(username, json_val))
+            else:
+                return JsonResponse({"Status": "Failed",
+                                     "Message": "Please send the valid body to proceed."})
+        except Exception:
+            return JsonResponse({"Status": "Failed",
+                                 "Message": "Error occurred while creating the groups."})
+
 
 
 # API to delete group
 class Deletegroup(APIView):
+    def get(self, request):
+        # try:
+        username = request.META.get('HTTP_USERNAME')
+        groupname = request.META.get('HTTP_GROUPNAME')
+        return JsonResponse(delete_group(username, groupname))
+        # except Exception:
+        #     return JsonResponse({"Status": "Failed",
+        #                          "Message": "Error occurred while deleting the groups."})
     pass
 
 

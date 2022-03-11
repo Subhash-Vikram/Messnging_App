@@ -31,7 +31,7 @@ urlpatterns = [
     path('Group/search', views.Searchgroup.as_view()),
     path('Group/addmembers', views.Addmembers.as_view()),
     path('Group/removemembers', views.Removemembers.as_view()),
-    path('Group/Messages', views.Viewmessages.as_view()),
-    path('Group/Sendmessage', views.Sendmessage.as_view()),
-    path('Group/Likemessage', views.Likemessage.as_view()),
+    path('Group/messages', views.Viewmessages.as_view()),
+    path('Group/sendmessage', views.Sendmessage.as_view()),
+    path('Group/likemessage', views.Likemessage.as_view()),
 ]
