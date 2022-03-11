@@ -175,13 +175,13 @@ class Removemembers(APIView):
 class Viewmessages(APIView):
     @staticmethod
     def get(request):
-        try:
-            username = request.META.get('HTTP_USERNAME')
-            groupname = request.META.get('HTTP_GROUPNAME')
-            return JsonResponse(view_messages(username,groupname))
-        except Exception:
-            return JsonResponse({"Status": "Failed",
-                                 "Message": "Error occurred while viewing messages of the given group."})
+        # try:
+        username = request.META.get('HTTP_USERNAME')
+        groupname = request.META.get('HTTP_GROUPNAME')
+        return JsonResponse(view_messages(username, groupname), safe=False)
+        # except Exception:
+        #     return JsonResponse({"Status": "Failed",
+        #                          "Message": "Error occurred while viewing messages of the given group."})
 
 
 # API to Send message in a group
@@ -192,24 +192,23 @@ class Sendmessage(APIView):
             username = request.META.get('HTTP_USERNAME')
             groupname = request.META.get('HTTP_GROUPNAME')
             message = request.body
-            return JsonResponse(send_message(username, groupname, message))
+            return JsonResponse(send_message(username, groupname, message.decode('utf-8')))
         except Exception:
             return JsonResponse({"Status": "Failed",
                                  "Message": "Error occurred while sending message to the given group."})
-    pass
 
 
 # API to Like a message of the group
 class Likemessage(APIView):
     @staticmethod
-    def get(request):
+    def post(request):
         try:
             username = request.META.get('HTTP_USERNAME')
             groupname = request.META.get('HTTP_GROUPNAME')
             msgsentby = request.META.get('HTTP_MESSAGESENTBY')
             message = request.body
-            return JsonResponse(like_message(username, msgsentby, groupname, message))
+            return JsonResponse(like_message(username, msgsentby, groupname, message.decode('utf-8')))
         except Exception:
             return JsonResponse({"Status": "Failed",
                                  "Message": "Error occurred while liking message of the given group."})
-    pass
+

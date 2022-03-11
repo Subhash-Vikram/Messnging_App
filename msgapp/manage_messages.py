@@ -49,7 +49,7 @@ def send_message(username: str, groupname: str, message: str) -> dict:
     col_group = db[GRP_COLLECTION]
     if if_exists(col_group, username, groupname):
         doc = {'Username': username, 'Groupname': groupname,
-               'DateSent': datetime.now(), 'Likes': [], 'Message': message}
+               'DateSent': datetime.now(), 'Likes': [], 'Message': str(message)}
         col_msg_group = db[MSG_COLLECTION]
         sent_msg = col_msg_group.insert_one(doc)
         if sent_msg.acknowledged:
@@ -65,8 +65,8 @@ def like_message(username: str, msgsentby: str, groupname: str, message: str) ->
     col_group = db[GRP_COLLECTION]
     if if_exists(col_group, username, groupname):
         col_msg_group = db[MSG_COLLECTION]
-        msg_liked = col_msg_group.update_one({'Username': msgsentby, 'Groupname': groupname, 'Message': message},
-                                             {'$push': {'Members': {'$each': [username], '$position': -1}}})
+        msg_liked = col_msg_group.update_one({'Username': msgsentby, 'Groupname': groupname, 'Message': str(message)},
+                                             {'$push': {'Likes': username}})
         if msg_liked.modified_count:
             return {"Status": "Success", "Message": "message liked successfully"}
         else:
