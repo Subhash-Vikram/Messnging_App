@@ -91,3 +91,19 @@ def add_members(groupname: str, json_val: str) -> dict:
         return {"Status": "Success", "Message": "Users added successfully."}
     else:
         return {"Status": "Failed", "Message": "Group name doesn't exists."}
+
+
+# remove members from the group
+def remove_members(username: str, groupname: str, json_val: str) -> dict:
+    db = connect()
+    col_group = db[COLLECTION]
+    json_val = json.loads(json_val)
+    if if_exists(col_group, groupname):
+        update_records = col_group.update_one({'Name': groupname, 'CreatedBy': username},
+                                              {'$pull': {'Members': {'$in': json_val}}})
+        if update_records.modified_count:
+            return {"Status": "Success", "Message": "Users removed successfully."}
+        else:
+            return {"Status": "Failed", "Message": "User cannot remove members from group."}
+    else:
+        return {"Status": "Failed", "Message": "Group name doesn't exists."}

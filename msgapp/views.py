@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 # from msgapp.database import auth_user, is_Admin, list_of_users
 from msgapp.generic_functions import isValidJson
 from msgapp.manage_user import add_user, update_user, delete_user, auth_user, is_Admin, list_of_users
-from msgapp.manage_groups import list_of_groups, create_group, delete_group, search_group, add_members
+from msgapp.manage_groups import list_of_groups, create_group, delete_group, search_group, add_members, remove_members
 
 
 # Create your views here.
@@ -154,7 +154,20 @@ class Addmembers(APIView):
 
 # API to remove members from group
 class Removemembers(APIView):
-    pass
+    @staticmethod
+    def get(request):
+        try:
+            username = request.META.get('HTTP_USERNAME')
+            groupname = request.META.get('HTTP_GROUPNAME')
+            json_val = request.body
+            if isValidJson(json_val) and (str(json_val.decode('utf-8')) != ''):
+                return JsonResponse(remove_members(username, groupname, json_val))
+            else:
+                return JsonResponse({"Status": "Failed",
+                                     "Message": "Please send the valid body to proceed."})
+        except Exception:
+            return JsonResponse({"Status": "Failed",
+                                 "Message": "Error occurred while removing members from the groups."})
 
 
 # API to view messages of given group
