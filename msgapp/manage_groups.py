@@ -55,6 +55,7 @@ def create_group(username: str, json_val: str) -> dict:
         return {"Status": "Failed", "Message": "Group name already exists."}
 
 
+# Delete a group
 def delete_group(username: str, groupname: str) -> dict:
     db = connect()
     col_group = db[COLLECTION]
@@ -68,11 +69,25 @@ def delete_group(username: str, groupname: str) -> dict:
         return {"Status": "Failed", "Message": "Group name doesn't exists."}
 
 
+# search a group
 def search_group(groupname: str) -> dict:
     db = connect()
     col_group = db[COLLECTION]
     find_group = col_group.find({'Name': {'$regex': groupname, '$options': "$i"}}, {"_id": 0})
     if find_group.__sizeof__():
         return list(find_group)
+    else:
+        return {"Status": "Failed", "Message": "Group name doesn't exists."}
+
+
+# Adding members to the group
+def add_members(groupname: str, json_val: str) -> dict:
+    db = connect()
+    col_group = db[COLLECTION]
+    json_val = json.loads(json_val)
+    if if_exists(col_group, groupname):
+        col_group.update_one({'Name': groupname},
+                             {'$push': {'Members': {'$each': json_val, '$position': -1}}})
+        return {"Status": "Success", "Message": "Users added successfully."}
     else:
         return {"Status": "Failed", "Message": "Group name doesn't exists."}

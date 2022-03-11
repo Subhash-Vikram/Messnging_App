@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 # from msgapp.database import auth_user, is_Admin, list_of_users
 from msgapp.generic_functions import isValidJson
 from msgapp.manage_user import add_user, update_user, delete_user, auth_user, is_Admin, list_of_users
-from msgapp.manage_groups import list_of_groups, create_group, delete_group, search_group
+from msgapp.manage_groups import list_of_groups, create_group, delete_group, search_group, add_members
 
 
 # Create your views here.
@@ -123,22 +123,33 @@ class Deletegroup(APIView):
                                  "Message": "Error occurred while deleting the groups."})
 
 
-
 # API to search for a group
 class Searchgroup(APIView):
-    def get(self, request):
-        # try:
-        groupname = request.META.get('HTTP_GROUPNAME')
-        return JsonResponse(search_group(groupname), safe=False)
-        # except Exception:
-        #     return JsonResponse({"Status": "Failed",
-        #                          "Message": "Error occurred while searching the groups."})
-    pass
+    @staticmethod
+    def get(request):
+        try:
+            groupname = request.META.get('HTTP_GROUPNAME')
+            return JsonResponse(search_group(groupname), safe=False)
+        except Exception:
+            return JsonResponse({"Status": "Failed",
+                                 "Message": "Error occurred while searching the groups."})
 
 
 # API to add members to group
 class Addmembers(APIView):
-    pass
+    @staticmethod
+    def get(request):
+        try:
+            groupname = request.META.get('HTTP_GROUPNAME')
+            json_val = request.body
+            if isValidJson(json_val) and (str(json_val.decode('utf-8')) != ''):
+                return JsonResponse(add_members(groupname, json_val))
+            else:
+                return JsonResponse({"Status": "Failed",
+                                     "Message": "Please send the valid body to proceed."})
+        except Exception:
+            return JsonResponse({"Status": "Failed",
+                                 "Message": "Error occurred while adding members to the groups."})
 
 
 # API to remove members from group
