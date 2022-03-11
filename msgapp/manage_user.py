@@ -13,6 +13,7 @@ DATABASE = PARSER.get('Database', 'database')
 CONNECTION_STRING = CONNECTION_STRING.replace('<username>', PARSER.get('Database', 'username'))
 CONNECTION_STRING = CONNECTION_STRING.replace('<password>', PARSER.get('Database', 'password'))
 CONNECTION_STRING = CONNECTION_STRING.replace('<database>', DATABASE)
+COLLECTION = 'users'
 
 
 # used to connect to DB
@@ -34,7 +35,7 @@ def username_exists(col_user, username: str) -> bool:
 # Checks weather user is admin or not
 def is_Admin(username: str) -> bool:
     db = connect()
-    col_user = db['users']
+    col_user = db[COLLECTION]
     user_details = col_user.find_one({"Username": username})
     if user_details['Admin']:
         return True
@@ -45,7 +46,7 @@ def is_Admin(username: str) -> bool:
 def auth_user(username: str, password: str) -> dict:
     # checks weather user exists or not
     db = connect()
-    col_user = db['users']
+    col_user = db[COLLECTION]
     if username_exists(col_user, username):
         user_details = col_user.find_one({"Username": username, "Password": password})
         if user_details:
@@ -59,7 +60,7 @@ def auth_user(username: str, password: str) -> dict:
 # Returns list of all users of the application
 def list_of_users() -> list:
     db = connect()
-    col_user = db['users']
+    col_user = db[COLLECTION]
     user_details = col_user.find({}, {"_id": 0})
     return list(user_details)
 
@@ -69,7 +70,7 @@ def add_user(json_val: str) -> dict:
     json_val = json.loads(json_val)
     username = json_val['Username']
     db = connect()
-    col_user = db['users']
+    col_user = db[COLLECTION]
     if username_exists(col_user, username):
         return {"Status": "Failed", "Message": "Username already exists."}
     else:
@@ -82,7 +83,7 @@ def update_user(json_val: str) -> dict:
     json_val = json.loads(json_val)
     username = json_val['Username']
     db = connect()
-    col_user = db['users']
+    col_user = db[COLLECTION]
     if username_exists(col_user, username):
         col_user.update_one({'Username': username}, {'$set': json_val})
         return {"Status": "Success", "Message": "User updated successfully."}
@@ -95,7 +96,7 @@ def delete_user(json_val: str) -> dict:
     json_val = json.loads(json_val)
     username = json_val['Username']
     db = connect()
-    col_user = db['users']
+    col_user = db[COLLECTION]
     if username_exists(col_user, username):
         col_user.delete_one({'Username': username})
         return {"Status": "Success", "Message": "User deleted successfully."}

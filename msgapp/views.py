@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 # from msgapp.database import auth_user, is_Admin, list_of_users
 from msgapp.generic_functions import isValidJson
 from msgapp.manage_user import add_user, update_user, delete_user, auth_user, is_Admin, list_of_users
+from msgapp.manage_groups import list_of_groups
 
 
 # Create your views here.
@@ -24,8 +25,6 @@ class Admin(APIView):
     def get(request):
         username = request.META.get('HTTP_USERNAME')
         if is_Admin(username):
-            # json_val = request.body
-            # if isValidJson(json_val) and (str(json_val.decode('utf-8')) != ''):
             return JsonResponse(list_of_users(), safe=False)
         else:
             return JsonResponse({"Status": "Failed",
@@ -77,14 +76,23 @@ class Deleteuser(APIView):
                 return JsonResponse(delete_user(json_val))
             else:
                 return JsonResponse({"Status": "Failed",
-                                     "Message": "Please send the valid body to proceed"})
+                                     "Message": "Please send the valid body to proceed."})
         else:
             return JsonResponse({"Status": "Failed",
-                                 "Message": "Only Admin user can view this page"})
+                                 "Message": "Only Admin user can view this page."})
 
 
 # Group API which returns all Groups of current user
 class Group(APIView):
+    @staticmethod
+    def get(request):
+        username = request.META.get('HTTP_USERNAME')
+        try:
+            return JsonResponse(list_of_groups(username), safe=False)
+        except Exception:
+            return JsonResponse({"Status": "Failed",
+                                 "Message": "Error occurred while accessing the groups."})
+        pass
     pass
 
 
